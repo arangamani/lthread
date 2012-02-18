@@ -141,6 +141,8 @@ lthread_run(void)
             fd = get_fd(&sched->eventlist[p]);
             if (fd == sched->compute_pipes[0]) {
                 ret = read(fd, &tmp, sizeof(tmp));
+		if(ret == 0)
+		  perror("error reading from pipe");
                 continue;
             }
 

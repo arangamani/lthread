@@ -297,6 +297,8 @@ _lthread_compute_run(void *arg)
 
             /* signal the prev scheduler in case it was sleeping in a poll */
             ret = write(lt->sched->compute_pipes[1], "1", 1);
+	    if(ret == 0)
+	      perror("error writing to pipe");
         }
 
         pthread_mutex_lock(&compute_sched->run_mutex);
