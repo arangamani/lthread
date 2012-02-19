@@ -1,0 +1,35 @@
+diff --git a/src/lthread_compute.c b/src/lthread_compute.c
+index 0e06c94..969581c 100644
+--- ./src/lthread_compute.c
++++ ./src/lthread_compute.c
+@@ -297,6 +297,8 @@ _lthread_compute_run(void *arg)
+ 
+             /* signal the prev scheduler in case it was sleeping in a poll */
+             ret = write(lt->sched->compute_pipes[1], "1", 1);
++           if(ret == 0)
++             perror("error writing to pipe");
+         }
+ 
+         pthread_mutex_lock(&compute_sched->run_mutex);
+diff --git a/src/lthread_sched.c b/src/lthread_sched.c
+index cb02472..0e4dd6f 100644
+--- ./src/lthread_sched.c
++++ ./src/lthread_sched.c
+@@ -141,6 +141,8 @@ lthread_run(void)
+             fd = get_fd(&sched->eventlist[p]);
+             if (fd == sched->compute_pipes[0]) {
+                 ret = read(fd, &tmp, sizeof(tmp));
++               if(ret == 0)
++                 perror("error reading from pipe");
+                 continue;
+             }
+
+diff --git a/Makefile.am b/Makefile.am
+index c6231c2..af437a6 100644
+--- ./Makefile.am
++++ ./Makefile.am
+@@ -1,2 +1 @@
+ SUBDIRS = src
+-dist_doc_DATA = README.md
+
+
